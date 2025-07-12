@@ -1,0 +1,15 @@
+version: "3.8"
+
+services:
+  pyspark:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: my_pyspark_pandas
+    container_name: pyspark_container
+    volumes:
+      - /Users/mohannadrateb/Desktop/FLIX:/app   # <-- Make sure this matches the case exactly
+    working_dir: /app
+    command: tail -f /dev/null
+    ports:
+      - "4040:4040"  # Spark UI (optional)

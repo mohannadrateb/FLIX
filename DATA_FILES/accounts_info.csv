@@ -1,0 +1,9 @@
+ACCOUNT_ID,CURRENCY,CHANNEL_TYPE,AD_PLATFORM,BRAND,CAMPAIGN_OBJECTIVE,DOMAIN,LANGUAGE
+f17fae9c0599540a5a9bfacaf32e4c4419cd962fcd139a4d38e39e76ac81c089,EUR,mixed,Bing,Archived,,com,en
+34e8ae36c965cdb020d0b7d444d7accda9cdb047fa169882ebf686dbb22d8bb2,EUR,Google App Ads,Google,FlixBus,install,app,All
+996714161b6939b695748952ae599a2f926c845796c20efaede905f42da5be1a,USD,nonbrand,Google,Greyhound,,gh,en
+3834ab40f010b923b0ffefc69ceeb021aca565de90c38573aa5f304f6de3cfe8,EUR,nonbrand,Google,FlixBus,,us_es,es
+35d2da356bafc486fe6a3f81cd893c5cbf9df2914574ef51e53950b581eb0a2c,BRL,nonbrand,Google,FlixBus,,br,pt
+471a02e3f921d7db76921ae5f20300e1d182bb816986ee83b4f3e3dcfac63454,EUR,mixed,Google,FlixTrain,,de,de
+607cb5a07e89f5d2783fd1a21b5a8572fe725a127ce35d07a954759b979b653e,EUR,nonbrand,Google,FlixBus,,hu,hu
+f78773abe57fdb198cd5613b038a0c9d6ac8c6c82a3c12eab733cdf06f687f28,BRL,youtube,YouTube,FlixBus,,br,pt

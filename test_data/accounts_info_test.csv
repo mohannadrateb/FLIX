@@ -1,0 +1,3 @@
+ACCOUNT_ID,CURRENCY,CHANNEL_TYPE,AD_PLATFORM,BRAND,CAMPAIGN_OBJECTIVE,DOMAIN,LANGUAGE
+123,EUR,Online,Google Ads,BrandA,Awareness,brand-a.com,EN
+124,USD,Offline,Facebook Ads,BrandB,Conversions,brand-b.com,DE

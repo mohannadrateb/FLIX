@@ -4,6 +4,9 @@ java_opts.txt
 airflow/logs/*
 !airflow/logs/.gitkeep
 
+airflow/plugins/*
+!airflow/plugins/.gitkeep
+
 spark_app/logs/*
 !spark_app/logs/.gitkeep
 

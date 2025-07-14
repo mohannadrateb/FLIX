@@ -1,2 +1,14 @@
 __pycache__/
 java_opts.txt
+
+airflow/logs/*
+!airflow/logs/.gitkeep
+
+spark_app/logs/*
+!spark_app/logs/.gitkeep
+
+spark_app/output/*
+!spark_app/output/.gitkeep
+
+
+.DS_Store

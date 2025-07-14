@@ -1,6 +1,22 @@
-version: "3.8"
+
+x-airflow-common:
+  &airflow-common
+  image: apache/airflow:2.8.1
+  environment:
+    &airflow-env
+    AIRFLOW__CORE__EXECUTOR: LocalExecutor
+    AIRFLOW__CORE__SQL_ALCHEMY_CONN: postgresql+psycopg2://airflow:airflow@postgres/airflow
+    AIRFLOW__CORE__LOAD_EXAMPLES: "false"
+    AIRFLOW__API__AUTH_BACKENDS: "airflow.api.auth.backend.basic_auth"
+  volumes:
+    - ./airflow/dags:/opt/airflow/dags
+    - ./airflow/logs:/opt/airflow/logs
+    - ./airflow/plugins:/opt/airflow/plugins
+  depends_on:
+    - postgres
 
 services:
+  # PySpark service
   pyspark:
     build:
       context: .
@@ -8,8 +24,59 @@ services:
     image: my_pyspark_pandas
     container_name: pyspark_container
     volumes:
-      - /Users/mohannadrateb/Desktop/FLIX:/app   # <-- Make sure this matches the case exactly
+      - /Users/mohannadrateb/Desktop/FLIX:/app
     working_dir: /app
     command: tail -f /dev/null
     ports:
-      - "4040:4040"  # Spark UI (optional)
+      - "4040:4040"  # Optional: Spark UI
+
+  # Airflow PostgreSQL database
+  postgres:
+    image: postgres:13
+    environment:
+      POSTGRES_USER: airflow
+      POSTGRES_PASSWORD: airflow
+      POSTGRES_DB: airflow
+    volumes:
+      - postgres-db-volume:/var/lib/postgresql/data
+
+  # Airflow webserver
+  airflow-webserver:
+    <<: *airflow-common
+    command: webserver
+    ports:
+      - "8080:8080"
+    healthcheck:
+      test: ["CMD", "curl", "--fail", "http://localhost:8080/health"]
+      interval: 10s
+      retries: 5
+      start_period: 10s
+      timeout: 10s
+
+    volumes:
+    - ./airflow/dags:/opt/airflow/dags
+    - ./airflow/logs:/opt/airflow/logs
+    - ./airflow/plugins:/opt/airflow/plugins
+    - /var/run/docker.sock:/var/run/docker.sock  
+
+  # Airflow scheduler
+  airflow-scheduler:
+    <<: *airflow-common
+    command: scheduler
+    volumes:
+    - ./airflow/dags:/opt/airflow/dags
+    - ./airflow/logs:/opt/airflow/logs
+    - ./airflow/plugins:/opt/airflow/plugins
+    - /var/run/docker.sock:/var/run/docker.sock
+
+
+  # Airflow DB init and user creation
+  airflow-init:
+    <<: *airflow-common
+    command: >
+      bash -c "airflow db migrate &&
+               airflow users create --username admin --password admin --firstname Airflow --lastname Admin --role Admin --email admin@example.com"
+
+volumes:
+  postgres-db-volume:
+

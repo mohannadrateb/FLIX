@@ -63,8 +63,6 @@ services:
     <<: *airflow-common
     command: scheduler
 
-
-
   # Airflow DB init and user creation
   airflow-init:
     <<: *airflow-common

@@ -3,17 +3,20 @@ FROM apache/airflow:2.8.1
 
 USER root
 
-# Install Java (OpenJDK 17) and dependencies
+# Install Java and dependencies
 RUN apt-get update && apt-get install -y --no-install-recommends \
-    openjdk-17-jre-headless \
+    default-jdk \
     curl \
+    procps \
     && apt-get clean && rm -rf /var/lib/apt/lists/*
 
-# Set JAVA_HOME environment variable
-ENV JAVA_HOME=/usr/lib/jvm/java-17-openjdk-amd64
-ENV PATH=$JAVA_HOME/bin:$PATH
+# Verify Java installation
+RUN echo "Installed Java version:" && \
+    java -version && \
+    echo "Java path: $(readlink -f $(which java))" && \
+    echo "Detected JAVA_HOME: $(dirname $(dirname $(readlink -f $(which java))))"
 
-# Install Spark (choose your version)
+# Install Spark
 ENV SPARK_VERSION=3.4.1
 ENV HADOOP_VERSION=3
 
@@ -22,7 +25,7 @@ RUN curl -fsSL "https://archive.apache.org/dist/spark/spark-${SPARK_VERSION}/spa
     && mv /opt/spark-${SPARK_VERSION}-bin-hadoop${HADOOP_VERSION} /opt/spark \
     && rm /tmp/spark.tgz
 
-# Set Spark env vars
+# Set Spark environment variables
 ENV SPARK_HOME=/opt/spark
 ENV PATH=$SPARK_HOME/bin:$PATH
 
@@ -33,4 +36,3 @@ USER airflow
 RUN pip install --no-cache-dir \
     apache-airflow-providers-apache-spark==4.11.0 \
     pandas
-

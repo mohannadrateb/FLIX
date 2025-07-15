@@ -19,6 +19,10 @@ with DAG(
         task_id='submit_pyspark_job',
         
         bash_command="""
-        bash -c "set -o pipefail;  /opt/spark/bin/spark-submit /app/spark_app/pyspark_transformation.py /app/data/raw_costs.csv /app/data/accounts_info.csv /app/data/exchange_rates.csv 2>&1 | grep -vE 'WARN|DEBUG'"
+        # Set Java environment variables
+        export JAVA_HOME=$(dirname $(dirname $(readlink -f $(which java))))
+        export PATH=$JAVA_HOME/bin:$PATH
+        
+        /opt/spark/bin/spark-submit /app/spark_app/pyspark_transformation.py /app/data/raw_costs.csv /app/data/accounts_info.csv /app/data/exchange_rates.csv 2>&1 | grep -vE 'WARN|DEBUG'
         """
     )

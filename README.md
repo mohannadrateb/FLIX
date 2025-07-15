@@ -17,14 +17,14 @@ In the Airflow UI, you'll find 2 DAGs:
 - submit_spark_job
 
 ### 6. Check the output
-- Pandas DAG: submit_pandas_job\
+- Pandas DAG: submit_pandas_job
     - Input: Files from the data/ folder
 
     - Logs: Found in pandas_app/logs/
 
     - Output: Result saved to pandas_app/output/daily_spend.txt
 
-- PySpark DAG: submit_spark_job\
+- PySpark DAG: submit_spark_job
     - Input: Files from the data/ folder
 
     - Logs: Found in spark_app/logs/
@@ -33,15 +33,15 @@ In the Airflow UI, you'll find 2 DAGs:
 
 
 ### 7. checking the code
-- Pandas Pipeline Code:\
+- Pandas Pipeline Code:
     - pandas_app/pandas_transformation.py
 
-- PySpark Pipeline Code:\
+- PySpark Pipeline Code:
     - spark_app/pyspark_transformation.py
 Both scripts are documented and follow modular structure.
 ### 8. check Test
-Test scripts are included to verify both input and output data quality.\
-- Pandas Tests: pandas_app/tests.py\
+Test scripts are included to verify both input and output data quality.
+- Pandas Tests: pandas_app/tests.py
 - PySpark Tests: spark_app/tests_pyspark.py
 
 

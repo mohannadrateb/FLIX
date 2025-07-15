@@ -6,7 +6,7 @@
 ### 3. Start the container
     docker compose up
 ### 4. Access the Airflow UI
-Wait one minute and open
+After the airflow_webserver is up, check: \
 http://localhost:8080   username and password: admin
 
 ### 5. Tigger the Dag 

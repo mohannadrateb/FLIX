@@ -1,9 +1,7 @@
 
-x-airflow-common:
-  &airflow-common
-  image: apache/airflow:2.8.1
+x-airflow-common: &airflow-common
+  build: .  # Your custom Airflow image with Spark installed
   environment:
-    &airflow-env
     AIRFLOW__CORE__EXECUTOR: LocalExecutor
     AIRFLOW__CORE__SQL_ALCHEMY_CONN: postgresql+psycopg2://airflow:airflow@postgres/airflow
     AIRFLOW__CORE__LOAD_EXAMPLES: "false"
@@ -12,27 +10,13 @@ x-airflow-common:
     - ./airflow/dags:/opt/airflow/dags
     - ./airflow/logs:/opt/airflow/logs
     - ./airflow/plugins:/opt/airflow/plugins
-    - /var/run/docker.sock:/var/run/docker.sock 
-
+    - ./:/app                       # Mount current dirr
+    
   depends_on:
     - postgres
 
 services:
-  # PySpark service
-  pyspark:
-    build:
-      context: .
-      dockerfile: Dockerfile
-    image: my_pyspark_pandas
-    container_name: pyspark_container
-    volumes:
-      - /Users/mohannadrateb/Desktop/FLIX:/app
-    working_dir: /app
-    command: tail -f /dev/null
-    ports:
-      - "4040:4040"  # Optional: Spark UI
 
-  # Airflow PostgreSQL database
   postgres:
     image: postgres:13
     environment:
@@ -42,7 +26,6 @@ services:
     volumes:
       - postgres-db-volume:/var/lib/postgresql/data
 
-  # Airflow webserver
   airflow-webserver:
     <<: *airflow-common
     command: webserver
@@ -55,21 +38,15 @@ services:
       start_period: 10s
       timeout: 10s
 
-
-     
-
-  # Airflow scheduler
   airflow-scheduler:
     <<: *airflow-common
     command: scheduler
 
-  # Airflow DB init and user creation
   airflow-init:
     <<: *airflow-common
     command: >
-      bash -c "airflow db migrate &&
+      bash -c "airflow db upgrade &&
                airflow users create --username admin --password admin --firstname Airflow --lastname Admin --role Admin --email admin@example.com"
 
 volumes:
   postgres-db-volume:
-

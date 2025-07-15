@@ -25,7 +25,7 @@ logging.basicConfig(
 )
 
 logger = logging.getLogger(__name__)
-logger.info("Logging to file and stdout")
+logger.info(" Starting Logging")
 
 from tests_pyspark import (
     validate_raw_costs,
@@ -170,7 +170,7 @@ def aggregate_daily_spend(costs_df):
         sys.exit(1)    
     return daily_spend, daily_spend_validate
 
-def write_df_to_file(df_spend, path='output/daily_spend_spark.txt'):
+def write_df_to_file(df_spend, path='/app/spark_app/output/daily_spend_spark.txt'):
 
     try:
         df_spend = (

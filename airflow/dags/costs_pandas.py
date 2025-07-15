@@ -1,5 +1,6 @@
 from airflow import DAG
 from airflow.operators.bash import BashOperator
+from airflow.providers.apache.spark.operators.spark_submit import SparkSubmitOperator
 from datetime import datetime
 
 default_args = {
@@ -8,17 +9,15 @@ default_args = {
 }
 
 with DAG(
-    'submit_spark_job',
+    'submit_pandas_job',
     default_args=default_args,
     schedule_interval='55 19 * * *',
     catchup=False,
 ) as dag:
     
     submit_job = BashOperator(
-        
-        task_id='submit_pyspark_job',
-        
+        task_id='submit_pandas_job',
         bash_command="""
-        bash -c "set -o pipefail;  /opt/spark/bin/spark-submit /app/spark_app/pyspark_transformation.py /app/data/raw_costs.csv /app/data/accounts_info.csv /app/data/exchange_rates.csv 2>&1 | grep -vE 'WARN|DEBUG'"
+            python3 /app/pandas_app/pandas_transformation.py /app/data/raw_costs.csv /app/data/accounts_info.csv /app/data/exchange_rates.csv 2>&1
         """
     )

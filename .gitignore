@@ -13,5 +13,10 @@ spark_app/logs/*
 spark_app/output/*
 !spark_app/output/.gitkeep
 
+pandas_app/logs/*
+!pandas_app/logs/.gitkeep
+
+pandas_app/output/*
+!pandas_app/output/.gitkeep
 
 .DS_Store

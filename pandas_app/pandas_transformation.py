@@ -27,6 +27,17 @@ from tests import (
 
 
 def run_validations_input_files(raw_costs_path, account_info_path, exchange_rates_path):
+    """
+    Run all input file validations.
+
+    Validations include:
+    - Raw costs schema and content
+    - Exchange rates format
+    - Account info structure
+    - Consistency between raw costs and account info
+    - Duplicate records in raw costs
+    """
+
     try:
         validate_raw_costs(raw_costs_path)
         validate_exchange_rates(exchange_rates_path)
@@ -52,6 +63,13 @@ def load_data(raw_costs_path, account_info_path, exchange_rates_path):
 
 
 def preprocess_data(raw_costs_df, account_info_df, exchange_rates_df):
+
+    """
+    Preprocess input DataFrames:
+    - Standardizes column names to lowercase and strips whitespace.
+    - Converts relevant columns to datetime.
+    - Ensures exchange rates are numeric.
+    """    
     dataframes = [raw_costs_df, account_info_df, exchange_rates_df]
     try:
         for df in dataframes:
@@ -76,7 +94,7 @@ def preprocess_data(raw_costs_df, account_info_df, exchange_rates_df):
 
 def drop_duplicates_keep_last(raw_costs_df):
     """
-    Drops duplicate rows in raw_costs_df, keeping the last occurrence.
+    Drops duplicate rows in raw_costs_df, keeping the last occurrence based on the last extrracted at and the index.
 
     """
     try:
@@ -112,9 +130,16 @@ def join_costs_with_accounts(raw_costs_df, account_info_df):
     return merged_df
 
 def get_exchange_rate(row, exchange_rates_df):
+    """
+    Get the EUR exchange rate for a given row based on currency and date.
+
+    Parameters:
+        row (Series): A row from the main DataFrame with 'currency' and 'segments_date'.
+        exchange_rates_df: DataFrame containing exchange rate data 
+                                       with 'currency', 'base', 'rate', 'valid_from', 'valid_to'.
+    """    
 
     try:
-        """Returns the EUR exchange rate for a given row."""
         if row['currency'] == 'EUR':
             return 1.0
 
@@ -156,7 +181,7 @@ def aggregate_daily_spend(costs_df):
     and calculates the total spend in EUR per group.
 
     Parameters:
-        costs_df (pd.DataFrame): DataFrame containing a 'cost_eur' column and the required grouping columns.
+        costs_df: DataFrame containing a 'cost_eur' column and the required grouping columns.
 
     Returns:
         pd.DataFrame: Aggregated daily spend with column 'total_spend_eur'.
@@ -186,7 +211,19 @@ def aggregate_daily_spend(costs_df):
 
 
 def run_validations_output(daily_spend_validate):
+    """
+    Run output validations on the processed data.
 
+    Parameters:
+        daily_spend_validate (DataFrame): The DataFrame to validate.
+
+    Validations:
+        - Checks if 'cost_eur' is correctly calculated.
+        - Verifies that exchange rate to EUR is applied properly.
+
+    Exits:
+        Logs error and exits if any validation fails.
+    """
     try:    
     # Validate cost_eur calculation
         validate_cost_eur_calculation(daily_spend_validate)
@@ -198,7 +235,7 @@ def run_validations_output(daily_spend_validate):
 
 def write_df_to_file(df_spend, path='/app/pandas_app/output/daily_spend.txt'):
     """
-    Writes the DataFrame to a text file in a human-readable format.
+    Writes the DataFrame to a text file.
     
     Parameters:
         df_spend (pd.DataFrame): DataFrame to write to file.
@@ -256,21 +293,13 @@ def process_pipeline(raw_costs_path, account_info_path, exchange_rates_path):
     return daily_spend, daily_spend_validate
 
 
-
-
-
-
-
-
-
-
 if __name__ == "__main__":  
     import sys
-    """
+    
     if len(sys.argv) != 4:
         logger.info("PLEASE provide the paths to the raw costs, account info, and exchange rates CSV files as command line arguments.")
         sys.exit(1)
-    """    
+        
     raw_costs_path = sys.argv[1]
     account_info_path = sys.argv[2]
     exchange_rates_path = sys.argv[3]

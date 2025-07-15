@@ -44,6 +44,17 @@ def create_spark_session():
 
 
 def run_validations_input_files(raw_costs_path, account_info_path, exchange_rates_path):
+    """
+    Run all input file validations.
+
+    Validations include:
+    - Raw costs schema and content
+    - Exchange rates format
+    - Account info structure
+    - Consistency between raw costs and account info
+    - Duplicate records in raw costs
+    """
+
     try:
         validate_raw_costs(raw_costs_path)
         validate_exchange_rates(exchange_rates_path)
@@ -68,11 +79,12 @@ def load_data(spark, raw_costs_path, account_info_path, exchange_rates_path):
         sys.exit(1)
         
 
-
-
-
-
 def preprocess_data(raw_costs_df, account_info_df, exchange_rates_df):
+    """
+    Preprocess input DataFrames:
+    - Standardizes column names to lowercase and strips whitespace.
+    - Converts relevant columns to timestamp.
+    """   
     try:
         def clean_columns(df):
             for col_name in df.columns:
@@ -97,7 +109,7 @@ def preprocess_data(raw_costs_df, account_info_df, exchange_rates_df):
 def drop_duplicates_keep_last(raw_costs_df):
     
     """
-    Drops duplicate rows in raw_costs_df, keeping the last occurrence based on last_extracted_at.
+    Drops duplicate rows in raw_costs_df, keeping the last occurrence based on last_extracted_at and the index.
     """
     try:
         # Add a unique row identifier to preserve original order for tie-breaking
@@ -123,7 +135,9 @@ def drop_duplicates_keep_last(raw_costs_df):
     return raw_costs_last_extracted
 
 def join_costs_with_accounts(raw_costs_df, account_info_df):
-
+    """
+    Merge raw_costs with account_info on CUSTOMER_ID and ACCOUNT_ID.
+    """
     try:
         return raw_costs_df.join(
             account_info_df,
@@ -134,6 +148,7 @@ def join_costs_with_accounts(raw_costs_df, account_info_df):
         logger.error(f"Error joining costs with accounts: {e}", exc_info=True)
         sys.exit(1)
 def add_eur_cost_column(costs_df, exchange_rates_df):
+    """Adds rate and cost_eur columns to the input dataframe."""
 
     try:
         cost_exchange_rate = costs_df.join(
@@ -154,6 +169,16 @@ def add_eur_cost_column(costs_df, exchange_rates_df):
     return cost_exchange_rate
 
 def aggregate_daily_spend(costs_df):
+    """
+    Groups the cost data by segments_date, domain, brand, and channel_type,
+    and calculates the total spend in EUR per group.
+
+    Parameters:
+        costs_df: DataFrame containing a 'cost_eur' column and the required grouping columns.
+
+    Returns:
+        pd.DataFrame: Aggregated daily spend with column 'total_spend_eur'.
+    """    
 
     try:
         daily_spend_validate = costs_df.groupBy("segments_date", "domain", "brand", "channel_type") \
@@ -171,6 +196,13 @@ def aggregate_daily_spend(costs_df):
     return daily_spend, daily_spend_validate
 
 def write_df_to_file(df_spend, path='/app/spark_app/output/daily_spend_spark.txt'):
+    """
+    Writes the DataFrame to a text file.
+    
+    Parameters:
+        df_spend (pd.DataFrame): DataFrame to write to file.
+        path (str): Path to the output file.
+    """
 
     try:
         df_spend = (
@@ -222,7 +254,7 @@ def process_pipeline(raw_costs_path, account_info_path, exchange_rates_path):
 
     return daily_spend
 
-# Save the result to a CSV file
+
 
 if __name__ == "__main__":
     import sys

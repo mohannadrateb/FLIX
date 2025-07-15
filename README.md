@@ -1,4 +1,4 @@
-1. docker compose up --build
+1. docker compose build
 2. docker compose run airflow-init
 3. wait 1 min and then access http://localhost:8080
 4. Trigger the dag

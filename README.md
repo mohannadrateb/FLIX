@@ -1,7 +1,7 @@
 ### 1. Build the Docker containers
 docker compose build (This step may take 15 to 20 minutes)
 ### 2. Initlialize Airflow
-docker compose run airflow-init
+    docker compose run airflow-init
 ### 3. Start the container
 docker compose up
 ### 4. Access the Airflow UI

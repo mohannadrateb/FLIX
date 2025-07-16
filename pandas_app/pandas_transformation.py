@@ -202,7 +202,7 @@ def aggregate_daily_spend(costs_df):
                 
             })
         )
-        daily_spend = daily_spend_validate.drop(columns=['total_metrics_cost', 'rate'])
+        daily_spend = daily_spend_validate.drop(columns=['total_metrics_cost', 'rate','currency'])
 
     except Exception as e:
         logger.error(f"Error aggregating daily spend: {e}", exc_info=True)

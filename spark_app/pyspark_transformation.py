@@ -152,12 +152,25 @@ def add_eur_cost_column(costs_df, exchange_rates_df):
 
     try:
         cost_exchange_rate = costs_df.join(
+        exchange_rates_df,
+        on=(
+            (costs_df.currency == exchange_rates_df.currency) &
+            (costs_df.segments_date >= exchange_rates_df.valid_from) &
+            (costs_df.segments_date <= exchange_rates_df.valid_to) &
+            (exchange_rates_df.base == 'EUR')
+        ),
+        how="left"
+        ).drop(exchange_rates_df.currency)
+
+        #IN CASE the exchange_rate table is small compared to the cost, we can braodcast it better
+        """
+        cost_exchange_rate = costs_df.join(
             broadcast(exchange_rates_df),
             (costs_df.currency == exchange_rates_df.currency) &
             (costs_df.segments_date >= exchange_rates_df.valid_from) &
             (costs_df.segments_date <= exchange_rates_df.valid_to) &
             (exchange_rates_df.base == 'EUR'), how="left").drop(exchange_rates_df.currency)
-
+        """
         cost_exchange_rate = cost_exchange_rate.withColumn(
         "rate",
         when(col("currency") == "EUR", lit(1)).otherwise(col("rate"))
